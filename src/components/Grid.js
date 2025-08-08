@@ -1,7 +1,16 @@
 import React, { useMemo } from "react";
 
-export const Grid = ({ children, startDate, endDate, totalDays, timelineWidth }) => {
-  const markers = useMemo(
+import { getTimelineScale } from "../utils/getTimelineScale.js";
+
+export const Grid = ({
+  children,
+  startDate,
+  endDate,
+  totalDays,
+  timelineWidth,
+  viewType,
+}) => {
+  const monthMarkers = useMemo(
     function generateMonthMarkers() {
       const monthCount =
         Math.ceil(
@@ -21,7 +30,7 @@ export const Grid = ({ children, startDate, endDate, totalDays, timelineWidth })
             0,
             (monthStart - startDate) / (1000 * 60 * 60 * 24)
           );
-          const leftOffset = (daysFromStart / totalDays) * 100;
+          const leftOffset = daysFromStart * getTimelineScale(viewType);
 
           return {
             date: monthStart,
@@ -36,21 +45,58 @@ export const Grid = ({ children, startDate, endDate, totalDays, timelineWidth })
         return null;
       });
     },
-    [startDate, endDate, totalDays]
+    [startDate, endDate, totalDays, viewType]
   );
 
+  const weekDividers = useMemo(() => {
+    if (viewType === "year") return [];
+
+    const totalDays =
+      Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+    return Array.from({ length: totalDays }, (_, i) => {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(startDate.getDate() + i);
+      return currentDate;
+    })
+      .filter((date) => date.getDay() === 1 && date <= endDate)
+      .map((mondayDate) => {
+        const daysFromStart = (mondayDate - startDate) / (1000 * 60 * 60 * 24);
+
+        return daysFromStart * getTimelineScale(viewType);
+      });
+  }, [startDate, endDate, viewType]);
+
   return (
-    <div
-      style={{ width: timelineWidth }}
-      className="relative"
-    >
-      <div className="relative h-12 mb-4">
-        <div className="absolute top-0 left-0 w-full h-full border-b-2 border-gray-300 bg-gray-50"></div>
-        {markers.map((marker, index) => (
+    <div style={{ width: timelineWidth }} className="relative">
+      <div className="absolute inset-0 pointer-events-none">
+        {weekDividers.map((offset, index) => (
+          <div
+            key={`week-${index}`}
+            className="absolute top-0 bottom-0 bg-gray-200"
+            style={{
+              left: offset,
+              width: "1px",
+            }}
+          />
+        ))}
+        {monthMarkers.map((marker, index) => (
+          <div
+            key={`month-${index}`}
+            className="absolute top-0 bottom-0 bg-gray-400"
+            style={{
+              left: marker.leftOffset,
+              width: "2px",
+            }}
+          />
+        ))}
+      </div>
+      <div className="relative h-12 border-b-2 border-gray-300 mb-4 bg-gray-50">
+        {monthMarkers.map((marker, index) => (
           <div
             key={index}
-            className="absolute top-0 h-full flex items-center border-b-2 border-gray-300 bg-gray-50 pr-4"
-            style={{ left: `${marker.leftOffset}%` }}
+            className="absolute top-0 h-full flex items-center"
+            style={{ left: marker.leftOffset }}
           >
             <div className="w-px h-full bg-gray-300 mr-2"></div>
             <span className="text-sm font-medium text-gray-600 whitespace-nowrap">
@@ -59,7 +105,7 @@ export const Grid = ({ children, startDate, endDate, totalDays, timelineWidth })
           </div>
         ))}
       </div>
-      {children}
+      <div className="relative">{children}</div>
     </div>
   );
 };

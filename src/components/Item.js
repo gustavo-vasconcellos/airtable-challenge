@@ -1,9 +1,11 @@
 import React from "react";
 
+import { parseDate } from "../utils/parseDate.js";
+
 export const Item = React.memo(
   ({ item, totalDays, timelineStart, timelineWidth }) => {
-    const itemStart = new Date(item.start);
-    const itemEnd = new Date(item.end);
+    const itemStart = parseDate(item.start);
+    const itemEnd = parseDate(item.end);
     const itemDuration = Math.max(
       1,
       (itemEnd - itemStart) / (1000 * 60 * 60 * 24) + 1
