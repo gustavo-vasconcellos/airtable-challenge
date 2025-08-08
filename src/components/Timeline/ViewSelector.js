@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { CalendarIcon, ChevronDown } from "../Icons.js";
+import { CalendarIcon, ChevronDown } from "../../Icons.js";
 
 export const VIEWS = [
   { id: "week", label: "Week View", days: 7 },

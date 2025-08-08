@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 
-import { getTimelineScale } from "../utils/getTimelineScale.js";
+import { getTimelineScale } from "../../utils/getTimelineScale.js";
 
 export const Grid = ({
   children,
