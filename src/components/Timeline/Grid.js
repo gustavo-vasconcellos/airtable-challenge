@@ -68,7 +68,7 @@ export const Grid = ({
   }, [startDate, endDate, viewType]);
 
   return (
-    <div style={{ width: timelineWidth }} className="relative">
+    <div style={{ width: timelineWidth + 100 }} className="relative">
       <div className="absolute inset-0 pointer-events-none">
         {weekDividers.map((offset, index) => (
           <div

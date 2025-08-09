@@ -25,7 +25,7 @@ export const Timeline = () => {
       const start = new Date(Math.min(...allDates));
       const end = new Date(Math.max(...allDates));
       const total = Math.max(1, (end - start) / (1000 * 60 * 60 * 24) + 1);
-      const width = Math.max(800, total * getTimelineScale(viewType) + 80);
+      const width = Math.max(800, total * getTimelineScale(viewType));
 
       return [start, end, total, width, lanes];
     },

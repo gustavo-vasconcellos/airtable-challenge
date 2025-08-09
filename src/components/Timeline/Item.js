@@ -2,8 +2,6 @@ import React, { useReducer } from "react";
 
 import { useTimeline } from "./Context.js";
 
-import { parseDate } from "../../utils/parseDate.js";
-
 const reducer = (state, action) => {
   switch (action.type) {
     case "START_EDIT":
@@ -67,8 +65,8 @@ export const Item = ({ item, totalDays, timelineStart, timelineWidth }) => {
     });
   };
 
-  const itemStart = parseDate(item.start);
-  const itemEnd = parseDate(item.end);
+  const itemStart = new Date(item.start);
+  const itemEnd = new Date(item.end);
   const itemDuration = Math.max(
     1,
     (itemEnd - itemStart) / (1000 * 60 * 60 * 24) + 1
